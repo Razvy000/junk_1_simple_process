@@ -18,6 +18,7 @@ router.get('/', function(req, res, next) {
 
 
 router.post('/upload', function(req, res) {
+    console.log("UPLOAD:", req.body)
     var path = require('path'); // add path module
     fs.readFile(req.files.image.path, function(err, data) { // readfilr from the given path
         var dirname = path.resolve(".") + '/uploads/'; // path.resolve(“.”) get application directory path
