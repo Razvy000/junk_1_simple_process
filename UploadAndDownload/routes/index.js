@@ -2,6 +2,10 @@ var express = require('express');
 var router = express.Router();
 var fs = require('fs');
 
+var util = require('util')
+var sys = require('sys');
+var exec = require('child_process').exec;
+var child;
 
 
 /* GET home page. */
@@ -23,6 +27,17 @@ router.post('/upload', function(req, res) {
                 res.json("Failed to upload your file");
             } else {
                 res.json("Successfully uploaded your file");
+
+                // execute a shell script if upload complete
+                cmd = util.format('python grayscale.py "%s" ', newPath);
+                // cmd = "ls"
+                child = exec(cmd, function (error, stdout, stderr) {
+                    sys.print('stdout: ' + stdout);
+                    sys.print('stderr: ' + stderr);
+                    if (error !== null) {
+                        console.log('exec error: ' + error);
+                    }
+                });
             }
         });
     });
