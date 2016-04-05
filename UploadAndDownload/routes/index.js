@@ -7,6 +7,16 @@ var sys = require('sys');
 var exec = require('child_process').exec;
 var child;
 
+var config = require('../config');
+
+var nodemailer = require("nodemailer");
+var smtpTransport = nodemailer.createTransport("SMTP", {
+    service: "Gmail",
+    auth: {
+        user: config.mail.user,
+        pass: config.mail.pass
+    }
+});
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -16,7 +26,7 @@ router.get('/', function(req, res, next) {
 });
 
 
-
+//////////////// UPLOAD
 router.post('/upload', function(req, res) {
     console.log("UPLOAD:", req.body)
     var path = require('path'); // add path module
@@ -32,7 +42,7 @@ router.post('/upload', function(req, res) {
                 // execute a shell script if upload complete
                 cmd = util.format('python grayscale.py "%s" ', newPath);
                 // cmd = "ls"
-                child = exec(cmd, function (error, stdout, stderr) {
+                child = exec(cmd, function(error, stdout, stderr) {
                     sys.print('stdout: ' + stdout);
                     sys.print('stderr: ' + stderr);
                     if (error !== null) {
@@ -56,6 +66,7 @@ router.get('/uploads/:file', function(req, res) {
 });
 
 
+/////////////// DOWNLOAD
 router.get('/download', function(req, res) { // create download route
     var path = require('path'); // get path
     var dir = path.resolve(".") + '/uploads/'; // give path
@@ -66,11 +77,43 @@ router.get('/download', function(req, res) { // create download route
     });
 });
 
+
+/////////// MAIL
+mailfun = function(req, res) {
+    console.log("calling mailfun")
+    var mailOptions = {
+        from: "razvanel@acasa.org", //"razvy000@gmail.com",
+        to: req.query.to,
+        subject: req.query.subject,
+        text: req.query.text
+    }
+    console.log(mailOptions);
+    smtpTransport.sendMail(mailOptions, function(error, response) {
+        if (error) {
+            console.log(error);
+            res.end("error");
+        } else {
+            console.log("Message sent: " + response.message);
+            res.end("sent");
+        }
+    });
+};
+
+router.get('/send', mailfun);
+router.get('/uploads/send', mailfun);
+
+
+// the FILE
 router.get('/:file(*)', function(req, res, next) { // this routes all types of file
     var path = require('path');
     var file = req.params.file;
     var path = path.resolve(".") + '/uploads/' + file;
     res.download(path); // magic of download fuction
 });
+
+
+
+
+
 
 module.exports = router;

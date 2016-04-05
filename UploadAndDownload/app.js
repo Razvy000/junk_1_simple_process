@@ -7,6 +7,8 @@ var connect = require('connect');
 
 var config = require('./config');
 
+var nodemailer = require("nodemailer");
+
 var app = express();
 var port = process.env.PORT || 3000; // run on the port 3000
 
