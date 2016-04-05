@@ -5,6 +5,7 @@ var path = require('path'); // add path to set and get
 var fs = require('fs'); // add filesystem
 var connect = require('connect');
 
+var config = require('./config');
 
 var app = express();
 var port = process.env.PORT || 3000; // run on the port 3000
@@ -46,3 +47,4 @@ app.use('/users', users);
 // listen at port 3000
 app.listen(port);
 console.log('The Server runs on port ' + port);
+console.log('config user is ' + config.mail.user);
