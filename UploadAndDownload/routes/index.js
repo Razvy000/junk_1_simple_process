@@ -79,13 +79,21 @@ router.get('/download', function(req, res) { // create download route
 
 
 /////////// MAIL
-mailfun = function(req, res) {
+router.get('/send', function(req, res) {
     console.log("calling mailfun")
+    message = "<html>" +
+    "<head><title>" + "A horse rode a pig" + "</title></head>" +
+        "<body>" +
+        "Click <a href=\"" + "http://localhost:3000/gray_DSC01575.JPG" + "\">here</a> to get your picture." +
+        "</body>" +
+        "</html>";
+
     var mailOptions = {
         from: "razvanel@acasa.org", //"razvy000@gmail.com",
         to: req.query.to,
-        subject: req.query.subject,
-        text: req.query.text
+        subject: req.query.subject ,
+        //text: req.query.text,
+        html: message
     }
     console.log(mailOptions);
     smtpTransport.sendMail(mailOptions, function(error, response) {
@@ -97,10 +105,7 @@ mailfun = function(req, res) {
             res.end("sent");
         }
     });
-};
-
-router.get('/send', mailfun);
-router.get('/uploads/send', mailfun);
+});
 
 
 // the FILE
